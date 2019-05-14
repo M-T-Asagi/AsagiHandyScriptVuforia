@@ -8,8 +8,11 @@ namespace AsagiVuforiaScripts
     {
         [SerializeField]
         GameObject imageTarget;
+        [SerializeField]
+        bool includeExtendTracking = false;
 
         public event EventHandler<EventArgs> TrackedEvent;
+        public event EventHandler<EventArgs> ExtendTracking;
         public event EventHandler<EventArgs> UnTrackedEvent;
 
         public bool Tracked { get; private set; }
@@ -31,7 +34,7 @@ namespace AsagiVuforiaScripts
            TrackableBehaviour.Status previousStatus,
            TrackableBehaviour.Status newStatus)
         {
-            if (newStatus == TrackableBehaviour.Status.TRACKED)
+            if (newStatus == TrackableBehaviour.Status.TRACKED || (includeExtendTracking && newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED))
             {
                 Tracked = true;
 
