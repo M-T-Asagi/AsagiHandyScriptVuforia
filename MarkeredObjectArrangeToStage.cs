@@ -72,13 +72,18 @@ namespace AsagiVuforiaScripts
         [SerializeField, Tooltip("オブジェクト配置時に上向きのベクトルがどの値を参照するか")]
         VectorsUseAs upToVectors = null;
         [SerializeField, Tooltip("Trueだとマーカーを読んでいる時しかオブジェクトがアクティブにならない")]
-        bool activeOnlyMarkerdetected = false;
+        bool objectOnlyActiveMarkerDetected = false;
+
+        public bool ObjectRearrange { get { return objectRearrange; } }
+        bool objectRearrange = true;
 
         GameObject instatiatedItem = null;
         Transform instatiatedItemTransform = null;
 
         Transform markerTransform = null;
-        
+
+
+
         // Start is called before the first frame update
         void Start()
         {
@@ -92,7 +97,7 @@ namespace AsagiVuforiaScripts
         // Update is called once per frame
         void Update()
         {
-            if(trackStateManager.Tracked)
+            if(trackStateManager.Tracked && objectRearrange)
             {
                 if (!instatiatedItem.activeSelf)
                     instatiatedItem.SetActive(true);
@@ -101,6 +106,10 @@ namespace AsagiVuforiaScripts
                 instatiatedItemTransform.rotation = Quaternion.LookRotation(
                     ConvertDirectionVector(GetDirectionFromType(markerTransform, itemLookTo), lookToVectors),
                     ConvertDirectionVector(GetDirectionFromType(markerTransform, itemUpTo), upToVectors));
+
+            } else if (objectOnlyActiveMarkerDetected && instatiatedItem.activeSelf)
+            {
+                instatiatedItem.SetActive(false);
             }
         }
 
@@ -164,6 +173,11 @@ namespace AsagiVuforiaScripts
                 default:
                     return Vector3.zero;
             }
+        }
+
+        public void ToggleRearrangement()
+        {
+            objectRearrange = !objectRearrange;
         }
     }
 }
